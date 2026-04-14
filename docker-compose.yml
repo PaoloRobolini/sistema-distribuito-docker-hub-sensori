@@ -1,0 +1,92 @@
+# ============================================================
+# SMART CITY HUB - Docker Compose
+# ============================================================
+# Completa questo file seguendo le fasi del progetto.
+# Ogni sezione TODO corrisponde a una fase dell'attività.
+# ============================================================
+
+services:
+
+  # ─── Servizio Webapp (istanza 1) ──────────────────────────
+  # Questa è la prima istanza dell'applicazione Flask.
+  # Costruisce l'immagine dal Dockerfile in ./webapp
+  app1:
+    build: ./webapp
+    container_name: app1
+    # TODO FASE 1: Aggiungi questo servizio alla rete smartcity-net
+    #   networks:
+    #     - smartcity-net
+
+  # ============================================================
+  # TODO FASE 1: Bilanciamento del Carico
+  # ============================================================
+  #
+  # 1. Aggiungi il servizio "app2" (seconda istanza della webapp):
+  #    - build: ./webapp
+  #    - container_name: app2
+  #    - networks: [smartcity-net]
+  #
+  # 2. Aggiungi il servizio "caddy" (reverse proxy e load balancer):
+  #    - image: caddy:2-alpine
+  #    - container_name: caddy
+  #    - ports: ["80:80"]
+  #    - volumes: ["./Caddyfile:/etc/caddy/Caddyfile"]
+  #    - networks: [smartcity-net]
+  #    - depends_on: [app1, app2]
+  #
+  # 3. Definisci la rete personalizzata alla fine del file:
+  #    networks:
+  #      smartcity-net:
+  #        driver: bridge
+  #
+  # ============================================================
+
+  # ============================================================
+  # TODO FASE 2: Broker MQTT (EMQX)
+  # ============================================================
+  #
+  # Aggiungi il servizio "emqx":
+  #   - image: emqx/emqx:latest
+  #   - container_name: emqx
+  #   - ports:
+  #       - "18083:18083"    # Dashboard web EMQX
+  #     ATTENZIONE: NON esporre la porta 1883 verso l'host!
+  #     (Vedi domanda B2 del report)
+  #   - networks: [smartcity-net]
+  #
+  # ============================================================
+
+  # ============================================================
+  # TODO FASE 3: Worker MQTT
+  # ============================================================
+  #
+  # Aggiungi il servizio "worker":
+  #   - build: ./worker
+  #   - container_name: worker
+  #   - depends_on: [emqx]
+  #   - networks: [smartcity-net]
+  #
+  # ============================================================
+
+  # ============================================================
+  # TODO FASE 4: Authelia (Forward Authentication)
+  # ============================================================
+  #
+  # Aggiungi il servizio "authelia":
+  #   - image: authelia/authelia:latest
+  #   - container_name: authelia
+  #   - volumes: ["./authelia:/config"]
+  #   - ports: ["9091:9091"]
+  #   - networks: [smartcity-net]
+  #
+  # ============================================================
+
+# ============================================================
+# TODO FASE 1: Definisci la rete personalizzata
+# ============================================================
+#
+# networks:
+#   smartcity-net:
+#     driver: bridge
+#
+# ============================================================
