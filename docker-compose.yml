@@ -13,33 +13,29 @@ services:
   app1:
     build: ./webapp
     container_name: app1
-    # TODO FASE 1: Aggiungi questo servizio alla rete smartcity-net
-    #   networks:
-    #     - smartcity-net
+    networks:
+      - smartcity-net
 
-  # ============================================================
-  # TODO FASE 1: Bilanciamento del Carico
-  # ============================================================
-  #
-  # 1. Aggiungi il servizio "app2" (seconda istanza della webapp):
-  #    - build: ./webapp
-  #    - container_name: app2
-  #    - networks: [smartcity-net]
-  #
-  # 2. Aggiungi il servizio "caddy" (reverse proxy e load balancer):
-  #    - image: caddy:2-alpine
-  #    - container_name: caddy
-  #    - ports: ["80:80"]
-  #    - volumes: ["./Caddyfile:/etc/caddy/Caddyfile"]
-  #    - networks: [smartcity-net]
-  #    - depends_on: [app1, app2]
-  #
-  # 3. Definisci la rete personalizzata alla fine del file:
-  #    networks:
-  #      smartcity-net:
-  #        driver: bridge
-  #
-  # ============================================================
+  # Fase 1: Seconda istanza della webapp (load balancing)
+  app2:
+    build: ./webapp
+    container_name: app2
+    networks:
+      - smartcity-net
+
+  # Fase 1: Caddy - Reverse Proxy e Load Balancer
+  caddy:
+    image: caddy:2-alpine
+    container_name: caddy
+    ports:
+      - "80:80"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    networks:
+      - smartcity-net
+    depends_on:
+      - app1
+      - app2
 
   # ============================================================
   # TODO FASE 2: Broker MQTT (EMQX)
@@ -81,12 +77,7 @@ services:
   #
   # ============================================================
 
-# ============================================================
-# TODO FASE 1: Definisci la rete personalizzata
-# ============================================================
-#
-# networks:
-#   smartcity-net:
-#     driver: bridge
-#
-# ============================================================
+# Fase 1: Rete personalizzata per la comunicazione tra i servizi
+networks:
+  smartcity-net:
+    driver: bridge
