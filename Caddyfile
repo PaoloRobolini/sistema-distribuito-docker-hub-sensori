@@ -5,23 +5,12 @@
 # Completa questo file seguendo le fasi del progetto.
 # ============================================================
 
-# ============================================================
-# TODO FASE 1: Configura il reverse proxy con load balancing
-# ============================================================
-#
-# 1. Definisci il blocco per http://localhost
-#    (il prefisso http:// disabilita l'auto-HTTPS di Caddy)
-#
-# 2. Dentro il blocco, usa la direttiva reverse_proxy per
-#    bilanciare il traffico tra le due istanze Flask:
-#
-#    http://localhost {
-#        reverse_proxy app1:5000 app2:5000 {
-#            lb_policy round_robin
-#        }
-#    }
-#
-# ============================================================
+# Fase 1: Reverse proxy con load balancing round-robin
+http://localhost {
+    reverse_proxy app1:5000 app2:5000 {
+        lb_policy round_robin
+    }
+}
 
 # ============================================================
 # TODO FASE 4: Configura la Forward Authentication per /publish
