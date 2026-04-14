@@ -56,18 +56,16 @@ services:
     networks:
       - smartcity-net
 
-  # ============================================================
-  # TODO FASE 4: Authelia (Forward Authentication)
-  # ============================================================
-  #
-  # Aggiungi il servizio "authelia":
-  #   - image: authelia/authelia:latest
-  #   - container_name: authelia
-  #   - volumes: ["./authelia:/config"]
-  #   - ports: ["9091:9091"]
-  #   - networks: [smartcity-net]
-  #
-  # ============================================================
+  # Fase 4: Authelia - Forward Authentication
+  authelia:
+    image: authelia/authelia:latest
+    container_name: authelia
+    volumes:
+      - ./authelia:/config
+    ports:
+      - "9091:9091"
+    networks:
+      - smartcity-net
 
 # Fase 1: Rete personalizzata per la comunicazione tra i servizi
 networks:

@@ -5,43 +5,27 @@
 # Completa questo file seguendo le fasi del progetto.
 # ============================================================
 
-# Fase 1: Reverse proxy con load balancing round-robin
+# Fase 1 + Fase 4: Reverse proxy con LB e Forward Authentication
 http://localhost {
-    reverse_proxy app1:5000 app2:5000 {
-        lb_policy round_robin
+
+    # Fase 4: Matcher per la rotta protetta
+    @publish path /publish
+
+    # Richieste a /publish: prima autenticazione tramite Authelia, poi proxy
+    handle @publish {
+        forward_auth authelia:9091 {
+            uri /api/authz/forward-auth
+            copy_headers Remote-User Remote-Groups Remote-Email Remote-Name
+        }
+        reverse_proxy app1:5000 app2:5000 {
+            lb_policy round_robin
+        }
+    }
+
+    # Tutte le altre richieste: proxy diretto (senza autenticazione)
+    handle {
+        reverse_proxy app1:5000 app2:5000 {
+            lb_policy round_robin
+        }
     }
 }
-
-# ============================================================
-# TODO FASE 4: Configura la Forward Authentication per /publish
-# ============================================================
-#
-# Modifica il blocco http://localhost per aggiungere la protezione
-# sulla rotta /publish. La rotta / deve restare pubblica.
-#
-# Struttura suggerita:
-#
-#    http://localhost {
-#        # Matcher per la rotta protetta
-#        @publish path /publish
-#
-#        # Richieste a /publish: prima autenticazione, poi proxy
-#        handle @publish {
-#            forward_auth authelia:9091 {
-#                uri /api/authz/forward-auth
-#                copy_headers Remote-User Remote-Groups Remote-Email Remote-Name
-#            }
-#            reverse_proxy app1:5000 app2:5000 {
-#                lb_policy round_robin
-#            }
-#        }
-#
-#        # Tutte le altre richieste: proxy diretto (senza auth)
-#        handle {
-#            reverse_proxy app1:5000 app2:5000 {
-#                lb_policy round_robin
-#            }
-#        }
-#    }
-#
-# ============================================================
