@@ -1,5 +1,7 @@
 import socket
+import json
 from flask import Flask, render_template, request, jsonify
+import paho.mqtt.client as mqtt
 
 app = Flask(__name__)
 
@@ -13,31 +15,19 @@ def index():
 
 @app.route("/publish", methods=["POST"])
 def publish():
-    # ============================================================
-    # TODO FASE 2: Implementa la pubblicazione MQTT
-    # ============================================================
-    # 1. Ricevi il payload JSON dalla richiesta:
-    #        data = request.get_json()
-    #
-    # 2. Importa paho.mqtt.client e crea un client MQTT:
-    #        import paho.mqtt.client as mqtt
-    #        client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-    #
-    # 3. Connettiti al broker EMQX sulla rete interna Docker:
-    #        client.connect("emqx", 1883, 60)
-    #
-    # 4. Pubblica il payload (come stringa JSON) sul topic "notifications":
-    #        import json
-    #        client.publish("notifications", json.dumps(data))
-    #
-    # 5. Disconnetti il client:
-    #        client.disconnect()
-    #
-    # 6. Ritorna una risposta JSON di conferma:
-    #        return jsonify({"status": "ok", "messaggio": "Dati pubblicati"})
-    #
-    # ============================================================
-    return jsonify({"errore": "Rotta /publish non ancora implementata"}), 501
+    """Riceve un payload JSON e lo pubblica sul topic MQTT 'notifications'."""
+    data = request.get_json()
+
+    if not data:
+        return jsonify({"errore": "Payload JSON mancante"}), 400
+
+    # Crea un client MQTT (versione 2.x) e pubblica il messaggio
+    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+    client.connect("emqx", 1883, 60)
+    client.publish("notifications", json.dumps(data))
+    client.disconnect()
+
+    return jsonify({"status": "ok", "messaggio": "Dati pubblicati su MQTT", "dati": data})
 
 
 if __name__ == "__main__":
