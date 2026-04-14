@@ -47,17 +47,14 @@ services:
     networks:
       - smartcity-net
 
-  # ============================================================
-  # TODO FASE 3: Worker MQTT
-  # ============================================================
-  #
-  # Aggiungi il servizio "worker":
-  #   - build: ./worker
-  #   - container_name: worker
-  #   - depends_on: [emqx]
-  #   - networks: [smartcity-net]
-  #
-  # ============================================================
+  # Fase 3: Worker MQTT - microservizio di elaborazione messaggi
+  worker:
+    build: ./worker
+    container_name: worker
+    depends_on:
+      - emqx
+    networks:
+      - smartcity-net
 
   # ============================================================
   # TODO FASE 4: Authelia (Forward Authentication)

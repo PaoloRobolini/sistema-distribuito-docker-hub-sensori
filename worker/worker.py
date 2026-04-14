@@ -1,38 +1,32 @@
-# ============================================================
-# SMART CITY HUB - Worker MQTT Subscriber
-# ============================================================
-#
-# TODO FASE 3: Implementa il Worker MQTT
-#
-# Questo microservizio deve:
-#
-# 1. Importare la libreria paho.mqtt.client
-#        import paho.mqtt.client as mqtt
-#
-# 2. Definire la callback on_connect(client, userdata, flags, reason_code, properties):
-#        - Stampare un messaggio di conferma connessione
-#        - Sottoscriversi al topic "notifications"
-#            client.subscribe("notifications")
-#
-# 3. Definire la callback on_message(client, userdata, message):
-#        - Stampare il topic e il payload del messaggio ricevuto
-#            print(f"[{message.topic}] {message.payload.decode()}")
-#
-# 4. Creare il client MQTT (ATTENZIONE alla versione 2.x!):
-#        client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-#
-# 5. Assegnare le callback:
-#        client.on_connect = on_connect
-#        client.on_message = on_message
-#
-# 6. Connettersi al broker EMQX sulla rete interna Docker:
-#        client.connect("emqx", 1883, 60)
-#
-# 7. Avviare il loop di ascolto infinito:
-#        client.loop_forever()
-#
-# ============================================================
+import paho.mqtt.client as mqtt
 
-print("Worker MQTT - Smart City Hub")
-print("In attesa di implementazione...")
-print("Completa questo file seguendo le istruzioni nei commenti sopra.")
+BROKER_HOST = "emqx"
+BROKER_PORT = 1883
+TOPIC = "notifications"
+
+
+def on_connect(client, userdata, flags, reason_code, properties):
+    """Callback alla connessione: sottoscrizione al topic."""
+    if reason_code == 0:
+        print(f"Connesso al broker MQTT ({BROKER_HOST}:{BROKER_PORT})")
+        client.subscribe(TOPIC)
+        print(f"Sottoscritto al topic '{TOPIC}' - in attesa di messaggi...")
+    else:
+        print(f"Connessione fallita con codice: {reason_code}")
+
+
+def on_message(client, userdata, message):
+    """Callback alla ricezione di un messaggio: stampa il contenuto."""
+    payload = message.payload.decode()
+    print(f"[{message.topic}] Messaggio ricevuto: {payload}")
+
+
+if __name__ == "__main__":
+    print("Worker MQTT - Smart City Hub")
+    print(f"Connessione al broker {BROKER_HOST}:{BROKER_PORT}...")
+
+    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+    client.on_connect = on_connect
+    client.on_message = on_message
+    client.connect(BROKER_HOST, BROKER_PORT, 60)
+    client.loop_forever()
