@@ -37,20 +37,15 @@ services:
       - app1
       - app2
 
-  # ============================================================
-  # TODO FASE 2: Broker MQTT (EMQX)
-  # ============================================================
-  #
-  # Aggiungi il servizio "emqx":
-  #   - image: emqx/emqx:latest
-  #   - container_name: emqx
-  #   - ports:
-  #       - "18083:18083"    # Dashboard web EMQX
-  #     ATTENZIONE: NON esporre la porta 1883 verso l'host!
-  #     (Vedi domanda B2 del report)
-  #   - networks: [smartcity-net]
-  #
-  # ============================================================
+  # Fase 2: Broker MQTT per comunicazione asincrona IoT
+  # NOTA: la porta 1883 NON è esposta verso l'host (solo rete interna)
+  emqx:
+    image: emqx/emqx:latest
+    container_name: emqx
+    ports:
+      - "18083:18083"
+    networks:
+      - smartcity-net
 
   # ============================================================
   # TODO FASE 3: Worker MQTT
