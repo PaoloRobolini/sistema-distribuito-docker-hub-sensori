@@ -32,6 +32,17 @@ services:
    networks:
      - smartcity-net
 
+  emqx:
+    image: emqx/emqx:latest
+    container_name: 
+      emqx
+    ports:
+      - "18083:18083"
+    expose:
+      - "1883"
+    networks:
+      - smartcity-net
+
 networks:
   smartcity-net:
     driver: bridge

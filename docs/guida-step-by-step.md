@@ -128,9 +128,7 @@ docker compose up --build
 
 Invia un messaggio di test:
 ```bash
-curl -X POST http://localhost/publish \
-  -H "Content-Type: application/json" \
-  -d '{"sensore": "temperatura", "valore": 22.5}'
+curl -X POST http://localhost/publish -H "Content-Type: application/json" -d '{"sensore": "temperatura", "valore": 22.5}'
 ```
 
 Controlla la **dashboard EMQX**: `http://localhost:18083` (login: `admin` / `public`)
