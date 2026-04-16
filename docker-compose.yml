@@ -1,33 +1,73 @@
+# ============================================================
+# SMART CITY HUB - Docker Compose
+# ============================================================
+# Completa questo file seguendo le fasi del progetto.
+# Ogni sezione TODO corrisponde a una fase dell'attività.
+# ============================================================
+
 services:
+
+  # ─── Servizio Webapp (istanza 1) ──────────────────────────
+  # Questa è la prima istanza dell'applicazione Flask.
+  # Costruisce l'immagine dal Dockerfile in ./webapp
+  app1:
+    build: ./webapp
+    container_name: app1
+    networks:
+      - smartcity-net
+
+  # Fase 1: Seconda istanza della webapp (load balancing)
+  app2:
+    build: ./webapp
+    container_name: app2
+    networks:
+      - smartcity-net
+
+  # Fase 1: Caddy - Reverse Proxy e Load Balancer
   caddy:
     image: caddy:2-alpine
     container_name: caddy
     ports:
       - "80:80"
     volumes:
-      - ./conf:/caddy/conf
-      - ./site:/caddy/srv
-      - caddy_data:/caddy/data
-      - caddy_config:/caddy/config
+      - ./Caddyfile:/etc/caddy/Caddyfile
     networks:
       - smartcity-net
-      
-  app1:
-    build: ./flask/app1
-    container_name: app1
+    depends_on:
+      - app1
+      - app2
+
+  # Fase 2: Broker MQTT per comunicazione asincrona IoT
+  # NOTA: la porta 1883 NON è esposta verso l'host (solo rete interna)
+  emqx:
+    image: emqx/emqx:latest
+    container_name: emqx
+    ports:
+      - "18083:18083"
     networks:
       - smartcity-net
 
-  app2:
-    build: ./flask/app2
-    container_name: app2
+  # Fase 3: Worker MQTT - microservizio di elaborazione messaggi
+  worker:
+    build: ./worker
+    container_name: worker
+    depends_on:
+      - emqx
     networks:
       - smartcity-net
 
-volumes:
-  caddy_data:
-  caddy_config:
+  # Fase 4: Authelia - Forward Authentication
+  authelia:
+    image: authelia/authelia:latest
+    container_name: authelia
+    volumes:
+      - ./authelia:/config
+    ports:
+      - "9091:9091"
+    networks:
+      - smartcity-net
 
+# Fase 1: Rete personalizzata per la comunicazione tra i servizi
 networks:
   smartcity-net:
     driver: bridge
