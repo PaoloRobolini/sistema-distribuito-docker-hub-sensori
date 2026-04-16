@@ -16,16 +16,16 @@ L'architettura è composta da:
 
 ```
                     ┌─────────────────────────────────────────────┐
-                    │            Rete Docker: smartcity-net        │
+                    │            Rete Docker: smartcity-net       │
   Browser :80 ───►  │  Caddy ──┬──► app1:5000 (Flask)             │
                     │          └──► app2:5000 (Flask)             │
-                    │                    │                         │
-                    │          forward_auth                        │
-                    │          ┌──► Authelia:9091                  │
-                    │          │                                   │
-                    │          EMQX:1883 (MQTT interno)            │
-                    │              │                               │
-                    │          Worker (subscriber)                 │
+                    │                    │                        │
+                    │          forward_auth                       │
+                    │          ┌──► Authelia:9091                 │
+                    │          │                                  │
+                    │          EMQX:1883 (MQTT interno)           │
+                    │              │                              │
+                    │          Worker (subscriber)                │
                     └─────────────────────────────────────────────┘
 ```
 
