@@ -4,7 +4,7 @@ app = flask.Flask(__name__)
 
 @app.route('/')
 def hello():
-    return 'Ciao da app 2!'
+    return 'Hello, World!'
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=True)
