@@ -48,6 +48,8 @@
                     </div>
                 </div>
 
+                <button id="pulsanteTest" class="btn btn-secondary me-2">Testa health</button>
+
                 <!-- Area risposta -->
                 <div id="risultato" class="alert d-none" role="alert"></div>
 
@@ -56,6 +58,27 @@
     </div>
 
     <script>
+        document.getElementById("pulsanteTest").addEventListener("click", async function() {
+            const risultato = document.getElementById("risultato");
+            try {
+                const response = await fetch("/health");
+                const data = await response.json();
+
+                if (response.ok) {
+                    risultato.className = "alert alert-success";
+                    risultato.textContent = "✅ " + (data.messaggio || JSON.stringify(data));
+                } else {
+                    risultato.className = "alert alert-danger";
+                    risultato.textContent = "❌ " + (data.errore || JSON.stringify(data));
+                }
+            } catch (err) {
+                risultato.className = "alert alert-danger";
+                risultato.textContent = "❌ Errore di rete: " + err.message;
+            }
+
+            risultato.classList.remove("d-none");
+        });
+        
         document.getElementById("sensorForm").addEventListener("submit", async function(e) {
             e.preventDefault();
             const risultato = document.getElementById("risultato");

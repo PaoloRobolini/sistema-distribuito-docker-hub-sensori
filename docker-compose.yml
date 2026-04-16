@@ -1,15 +1,11 @@
 # ============================================================
 # SMART CITY HUB - Docker Compose
 # ============================================================
-# Completa questo file seguendo le fasi del progetto.
-# Ogni sezione TODO corrisponde a una fase dell'attività.
-# ============================================================
 
 services:
 
   caddy:
-    image:
-      caddy:2-alpine
+    image: caddy:2-alpine
     ports:
       - "80:80"
     volumes:
@@ -18,28 +14,33 @@ services:
       - smartcity-net
 
   app1:
-    build: 
-      ./flask
-    container_name: 
-      app1
+    build: ./flask
+    container_name: app1
     networks:
       - smartcity-net
 
   app2:
-   build: ./flask
-   container_name: 
-    app2
-   networks:
-     - smartcity-net
+    build: ./flask
+    container_name: app2
+    networks:
+      - smartcity-net
 
   emqx:
     image: emqx/emqx:latest
-    container_name: 
-      emqx
+    container_name: emqx
     ports:
       - "18083:18083"
     expose:
       - "1883"
+    networks:
+      - smartcity-net
+
+  worker:
+    build: ./worker
+    container_name: worker
+    depends_on:
+      - emqx
+    restart: always
     networks:
       - smartcity-net
 
