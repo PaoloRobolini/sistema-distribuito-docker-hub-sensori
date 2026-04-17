@@ -1,0 +1,9 @@
+
+services:
+  app:
+    build:
+      ./webapp
+    container_name:
+      app1
+    ports:
+      - 10000:5000
