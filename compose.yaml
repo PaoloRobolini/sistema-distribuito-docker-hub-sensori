@@ -7,3 +7,17 @@ services:
       app1
     ports:
       - 10000:5000
+
+
+  caddy:
+    image:
+      caddy:2-alpine
+    container_name: 
+      caddy
+    ports:
+      - 18001:80
+      - 8443:443
+    depends_on:
+      - app
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
